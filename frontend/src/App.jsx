@@ -3,7 +3,10 @@ import { io } from 'socket.io-client';
 import JoinRoom from './components/JoinRoom';
 import StudyRoom from './components/StudyRoom';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3001'
+    : 'https://study-connect-rqdr.onrender.com');
 
 function App() {
   const [socket, setSocket] = useState(null);
