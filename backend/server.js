@@ -136,6 +136,13 @@ io.on('connection', (socket) => {
     socket.to(targetSocketId).emit('ice-candidate', socket.id, candidate);
   });
 
+  socket.on('peer-ready', (roomId) => {
+    const room = rooms.get(roomId);
+    if (room && room.users[socket.id]) {
+      socket.to(roomId).emit('user-ready', socket.id, room.users[socket.id]);
+    }
+  });
+
   // Shared helper to remove a user from a room and handle cleanup
   const removeUserFromRoom = (roomId) => {
     const room = rooms.get(roomId);

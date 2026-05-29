@@ -168,14 +168,17 @@ const VideoCall = ({ socket, roomId, currentUsername, peers }) => {
       });
     };
 
-    socket.on('user-joined', handleUserJoined);
+    socket.on('user-ready', handleUserJoined);
     socket.on('offer', handleReceiveOffer);
     socket.on('answer', handleReceiveAnswer);
     socket.on('ice-candidate', handleReceiveIceCandidate);
     socket.on('user-left', handleUserLeft);
 
+    // Tell existing peers we are fully ready for calls
+    socket.emit('peer-ready', roomId);
+
     return () => {
-      socket.off('user-joined', handleUserJoined);
+      socket.off('user-ready', handleUserJoined);
       socket.off('offer', handleReceiveOffer);
       socket.off('answer', handleReceiveAnswer);
       socket.off('ice-candidate', handleReceiveIceCandidate);
