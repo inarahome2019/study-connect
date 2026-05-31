@@ -192,14 +192,6 @@ const VideoCall = ({ socket, roomId, currentUsername, peers }) => {
 
   return (
     <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3>Study Session: {roomId}</h3>
-        <div className="status-indicator">
-          <div className={`status-dot ${hasPartners ? '' : 'offline'}`}></div>
-          {hasPartners ? `Connected (${otherPeers.length} partner${otherPeers.length > 1 ? 's' : ''})` : 'Waiting for partner'}
-        </div>
-      </div>
-      
       <div className="video-grid">
         <div className="video-container">
           <video ref={localVideoRef} autoPlay playsInline muted />

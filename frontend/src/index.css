@@ -435,3 +435,56 @@ body {
   border-radius: 999px;
   font-weight: bold;
 }
+
+/* SVG Animations for Cafe Menu */
+.menu-icon-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+@keyframes steam-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-10px) scale(1.2); opacity: 0; }
+}
+
+.svg-hot-drink .steam-1 {
+  animation: steam-rise 2s infinite ease-in-out;
+}
+.svg-hot-drink .steam-2 {
+  animation: steam-rise 2.5s infinite ease-in-out;
+  animation-delay: 0.5s;
+}
+
+@keyframes float-ice {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.svg-iced-drink .ice-1 {
+  animation: float-ice 3s infinite ease-in-out;
+}
+.svg-iced-drink .ice-2 {
+  animation: float-ice 2.5s infinite ease-in-out;
+  animation-delay: 0.5s;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+.animated-item:hover .svg-pastry {
+  animation: gentle-bounce 1s infinite ease-in-out;
+}
+
+.animated-item:hover .svg-hot-drink {
+  animation: gentle-bounce 1.5s infinite ease-in-out;
+}
+
+.animated-item:hover .svg-iced-drink {
+  animation: gentle-bounce 1.5s infinite ease-in-out;
+}

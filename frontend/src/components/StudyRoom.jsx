@@ -192,6 +192,23 @@ const StudyRoom = ({ socket, roomId, currentUsername, mode, maxMembers, theme, o
       )}
 
       <div className="main-content">
+        <div className="glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem' }}>
+          <h3 style={{ margin: 0 }}>Study Session: {roomId}</h3>
+          {roomState && roomState.maxMembers === 1 ? (
+            <div className="status-indicator">
+              <div className="status-dot"></div>
+              Solo Session
+            </div>
+          ) : (
+            <div className="status-indicator">
+              <div className={`status-dot ${Object.keys(peers).filter(id => id !== socket?.id).length > 0 ? '' : 'offline'}`}></div>
+              {Object.keys(peers).filter(id => id !== socket?.id).length > 0 
+                ? `Connected (${Object.keys(peers).filter(id => id !== socket?.id).length} partner${Object.keys(peers).filter(id => id !== socket?.id).length > 1 ? 's' : ''})` 
+                : 'Waiting for partner'}
+            </div>
+          )}
+        </div>
+
         {roomState && roomState.maxMembers === 2 && (
           <VideoCall 
             socket={socket} 

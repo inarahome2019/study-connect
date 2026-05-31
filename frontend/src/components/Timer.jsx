@@ -71,13 +71,12 @@ const Timer = ({ timerState, onSyncTimer, isCreator }) => {
     let nextMode = timerState.mode === 'work' ? 'break' : 'work';
     let nextDuration = 5 * 60; // Default break
 
-    // Simple transition based on common pomodoro (can be expanded)
     if (timerState.mode === 'work') {
-      nextDuration = timerState.duration === 50 * 60 ? 10 * 60 : 5 * 60;
+      // 5:1 ratio for study to break time
+      nextDuration = Math.round(timerState.duration / 5);
     } else {
-      nextDuration = timerState.duration === 10 * 60 ? 50 * 60 : 25 * 60; 
-      // This is a basic assumption, ideally we store the selected cycle type.
-      // We will just default to 25 work for now if coming from a break.
+      // If coming from a break, default back to 25 mins work
+      nextDuration = 25 * 60; 
     }
 
     onSyncTimer({
