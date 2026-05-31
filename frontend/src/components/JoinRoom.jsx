@@ -4,11 +4,13 @@ const JoinRoom = ({ onJoin }) => {
   const [roomId, setRoomId] = useState('');
   const [username, setUsername] = useState('');
   const [mode, setMode] = useState('join'); // 'join' or 'create'
+  const [maxMembers, setMaxMembers] = useState(2);
+  const [theme, setTheme] = useState('classic');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (roomId.trim() && username.trim()) {
-      onJoin(roomId.trim(), username.trim(), mode);
+      onJoin(roomId.trim(), username.trim(), mode, maxMembers, theme);
     }
   };
 
@@ -48,6 +50,26 @@ const JoinRoom = ({ onJoin }) => {
           onChange={(e) => setUsername(e.target.value)}
           required
         />
+        {mode === 'create' && (
+          <>
+            <select
+              value={maxMembers}
+              onChange={(e) => setMaxMembers(Number(e.target.value))}
+              style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #ffe6eb', outline: 'none', background: 'var(--bg-surface)' }}
+            >
+              <option value={2}>Pair (2 people)</option>
+              <option value={1}>Alone (1 person)</option>
+            </select>
+            <select
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+              style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #ffe6eb', outline: 'none', background: 'var(--bg-surface)' }}
+            >
+              <option value="classic">Theme: Classic</option>
+              <option value="study_cafe">Theme: Study Cafe</option>
+            </select>
+          </>
+        )}
         <button type="submit" className="btn">
           {mode === 'create' ? 'Create Room' : 'Join Room'}
         </button>

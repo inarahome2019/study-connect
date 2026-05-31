@@ -21,7 +21,7 @@ const rooms = new Map();
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  socket.on('create-room', (roomId, username) => {
+  socket.on('create-room', (roomId, username, maxMembers, theme) => {
     if (rooms.has(roomId)) {
       socket.emit('join-error', 'Room ID is already in use. Please choose another one.');
       return;
@@ -29,6 +29,8 @@ io.on('connection', (socket) => {
 
     rooms.set(roomId, {
       creatorId: socket.id,
+      maxMembers: maxMembers || 2,
+      theme: theme || 'classic',
       users: { [socket.id]: username }, // socketId -> username
       tasks: [],
       pendingRequests: [],
@@ -53,6 +55,11 @@ io.on('connection', (socket) => {
     }
 
     const room = rooms.get(roomId);
+    if (Object.keys(room.users).length >= room.maxMembers) {
+      socket.emit('join-error', 'This room has reached its maximum capacity.');
+      return;
+    }
+
     const creatorSocketId = room.creatorId;
     if (creatorSocketId) {
       room.pendingRequests.push({ socketId: socket.id, username });

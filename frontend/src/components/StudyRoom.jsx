@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import VideoCall from './VideoCall';
 import Tasks from './Tasks';
 import Timer from './Timer';
-import { LogOut, Check, X } from 'lucide-react';
+import CafeMenu from './CafeMenu';
+import { LogOut, Check, X, Coffee, CheckSquare } from 'lucide-react';
 
-const StudyRoom = ({ socket, roomId, currentUsername, mode, onLeave }) => {
+const StudyRoom = ({ socket, roomId, currentUsername, mode, maxMembers, theme, onLeave }) => {
   const [roomState, setRoomState] = useState(null); // null means pending or not joined yet
   const [joinStatus, setJoinStatus] = useState('connecting'); // 'connecting', 'pending', 'denied', 'joined', 'error'
   const [errorMsg, setErrorMsg] = useState('');
@@ -13,6 +14,7 @@ const StudyRoom = ({ socket, roomId, currentUsername, mode, onLeave }) => {
   const isCreator = roomState && roomState.creatorId === socket.id;
 
   const [peers, setPeers] = useState({});
+  const [activeTab, setActiveTab] = useState('tasks');
   const [tasks, setTasks] = useState([]);
   const [timerState, setTimerState] = useState({
     isRunning: false,
@@ -24,7 +26,7 @@ const StudyRoom = ({ socket, roomId, currentUsername, mode, onLeave }) => {
 
   useEffect(() => {
     if (mode === 'create') {
-      socket.emit('create-room', roomId, currentUsername);
+      socket.emit('create-room', roomId, currentUsername, maxMembers, theme);
     } else {
       socket.emit('join-room', roomId, currentUsername);
     }
@@ -120,6 +122,18 @@ const StudyRoom = ({ socket, roomId, currentUsername, mode, onLeave }) => {
     socket.emit('sync-timer', roomId, newTimerState);
   };
 
+  const handleCafeOrder = (timeInMins, itemName) => {
+    const duration = timeInMins * 60;
+    const newTimerState = {
+      isRunning: true,
+      mode: 'work',
+      duration: duration,
+      remaining: duration,
+      lastUpdateTime: Date.now()
+    };
+    handleSyncTimer(newTimerState);
+  };
+
   if (joinStatus === 'connecting') {
     return (
       <div className="glass-panel" style={{ textAlign: 'center', margin: 'auto', maxWidth: '400px' }}>
@@ -178,18 +192,46 @@ const StudyRoom = ({ socket, roomId, currentUsername, mode, onLeave }) => {
       )}
 
       <div className="main-content">
-        <VideoCall 
-          socket={socket} 
-          roomId={roomId} 
-          currentUsername={currentUsername} 
-          peers={peers}
-        />
-        <Tasks 
-          tasks={tasks} 
-          onAddTask={handleAddTask} 
-          onToggleTask={handleToggleTask} 
-          currentUsername={currentUsername}
-        />
+        {roomState && roomState.maxMembers === 2 && (
+          <VideoCall 
+            socket={socket} 
+            roomId={roomId} 
+            currentUsername={currentUsername} 
+            peers={peers}
+          />
+        )}
+        
+        {roomState && roomState.theme === 'study_cafe' && (
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <button 
+              className={`btn ${activeTab === 'tasks' ? 'active' : ''}`}
+              style={{ flex: 1, opacity: activeTab === 'tasks' ? 1 : 0.5, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+              onClick={() => setActiveTab('tasks')}
+            >
+              <CheckSquare size={18} /> Tasks
+            </button>
+            <button 
+              className={`btn ${activeTab === 'cafe' ? 'active' : ''}`}
+              style={{ flex: 1, opacity: activeTab === 'cafe' ? 1 : 0.5, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+              onClick={() => setActiveTab('cafe')}
+            >
+              <Coffee size={18} /> Cafe Menu
+            </button>
+          </div>
+        )}
+
+        <div style={{ display: activeTab === 'tasks' ? 'block' : 'none' }}>
+          <Tasks 
+            tasks={tasks} 
+            onAddTask={handleAddTask} 
+            onToggleTask={handleToggleTask} 
+            currentUsername={currentUsername}
+          />
+        </div>
+
+        {roomState && roomState.theme === 'study_cafe' && activeTab === 'cafe' && (
+          <CafeMenu onOrder={handleCafeOrder} />
+        )}
       </div>
       
       <div className="side-content" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>

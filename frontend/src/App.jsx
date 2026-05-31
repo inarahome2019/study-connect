@@ -21,8 +21,8 @@ function App() {
     };
   }, []);
 
-  const handleJoin = (roomId, username, mode) => {
-    setSessionInfo({ roomId, username, mode });
+  const handleJoin = (roomId, username, mode, maxMembers, theme) => {
+    setSessionInfo({ roomId, username, mode, maxMembers, theme });
   };
 
   const handleLeave = () => {
@@ -44,6 +44,8 @@ function App() {
             roomId={sessionInfo.roomId} 
             currentUsername={sessionInfo.username}
             mode={sessionInfo.mode}
+            maxMembers={sessionInfo.maxMembers}
+            theme={sessionInfo.theme}
             onLeave={handleLeave}
           />
         )
